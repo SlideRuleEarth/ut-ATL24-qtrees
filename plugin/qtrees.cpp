@@ -1,10 +1,59 @@
+/******************************************************************************
+ * INCLUDES
+ ******************************************************************************/
+
 #include "precompiled.h"
 #include "classify_cmd.h"
 #include "ATL24_qtrees/xgboost.h"
 
-const std::string usage {"classify [options] < input_filename.csv > output_filename.csv"};
+#include "icesat2/BathyFields.h"
+#include "OsApi.h"
+#include "EventLib.h"
+#include "LuaEngine.h"
 
-int qtrees (int argc, char **argv)
+using BathyFields::extent_t;
+using BathyFields::photon_t;
+
+/******************************************************************************
+ * DEFINES
+ ******************************************************************************/
+
+#define LUA_QTREES_LIBNAME    "qtrees"
+
+/******************************************************************************
+ * LOCAL FUNCTIONS
+ ******************************************************************************/
+
+/*----------------------------------------------------------------------------
+ * qtrees_version
+ *----------------------------------------------------------------------------*/
+int qtrees_version (lua_State* L)
+{
+    lua_pushstring(L, BINID);
+    lua_pushstring(L, BUILDINFO);
+    return 2;
+}
+
+/*----------------------------------------------------------------------------
+ * qtrees_open
+ *----------------------------------------------------------------------------*/
+int qtrees_open (lua_State *L)
+{
+    static const struct luaL_Reg qtrees_functions[] = {
+        {"version",             qtrees_version},
+        {NULL,                  NULL}
+    };
+
+    /* Set Library */
+    luaL_newlib(L, qtrees_functions);
+
+    return 1;
+}
+
+/*----------------------------------------------------------------------------
+ * qtrees_classify
+ *----------------------------------------------------------------------------*/
+int qtrees_classify (std::vector<extent_t*> extents)
 {
     using namespace std;
     using namespace ATL24_qtrees;
@@ -15,53 +64,39 @@ int qtrees (int argc, char **argv)
 
     try
     {
-        // Keep track of performance
-        timer total_timer;
-        timer processing_timer;
-
-        total_timer.start ();
-
-        // Parse the args
-        const auto args = cmd::get_args (argc, argv, usage);
-
-        // If you are getting help, exit without an error
-        if (args.help)
-            return 0;
-
-        if (args.verbose)
-        {
-            clog << "cmd_line_parameters:" << endl;
-            clog << args;
-        }
-
-        if (args.model_filename.empty ())
-            throw runtime_error ("No model filename was specified");
+        // Parameters
+        bool verbose = true;
+        string model_filename = "/data/model-20240607.json";
 
         // Create the booster
-        xgbooster xgb (args.verbose);
-        xgb.load_model (args.model_filename);
+        xgbooster xgb (verbose);
+        xgb.load_model (model_filename);
 
-        if (args.verbose)
-            clog << "Reading CSV from stdin" << endl;
-
-        // Read the input file
-        const auto photons = read (cin);
-
-        if (args.verbose)
+        // Get number of samples
+        size_t number_of_samples = 0;
+        for(size_t i = 0; i < extents.size(); i++)
         {
-            clog << "Total photons = " << photons.rows () << endl;
-            clog << "Total dataframe columns = " << photons.headers.size () << endl;
+            number_of_samples += extents[i]->photon_count;
         }
 
-        processing_timer.start ();
+        // Preallocate samples vector
+        std::vector<utils::sample> samples;
+        samples.reserve(number_of_samples);
+        mlog(INFO, "Building %ld photon samples", number_of_samples);
 
-        // Convert it to the correct format
-        auto samples = convert_dataframe (photons);
-
-        if (args.verbose)
+        // Build and add samples
+        for(size_t i = 0; i < extents.size(); i++)
         {
-            clog << samples.size () << " samples read" << endl;
-            clog << "Creating features" << endl;
+            for(size_t j = 0; j < extents[i]->photon_count; j++)
+            {
+                photon_t* photons = extents[i]->photons;
+                utils::sample s = {
+                    .h5_index = static_cast<size_t>(photons[j].index_ph),
+                    .x = photons[j].x_atc,
+                    .z = photons[j].ortho_h
+                };
+                samples.push_back(s);
+            }
         }
 
         // Save the photon indexes
@@ -79,9 +114,6 @@ int qtrees (int argc, char **argv)
         const size_t cols = f.features_per_sample ();
         vector<float> features; features.reserve (rows * cols);
         vector<uint32_t> labels; labels.reserve (rows);
-
-        if (args.verbose)
-            clog << "Features per sample " << f.features_per_sample () << endl;
 
         for (size_t i = 0; i < samples.size (); ++i)
         {
@@ -101,23 +133,7 @@ int qtrees (int argc, char **argv)
 
         // Get predictions
         {
-            if (args.verbose)
-                clog << "Getting predictions" << endl;
-
             const auto predictions = xgb.predict (features, rows, cols);
-
-            if (args.verbose)
-            {
-                size_t correct = 0;
-
-                assert (labels.size () == predictions.size ());
-                for (size_t i = 0; i < labels.size (); ++i)
-                    correct += (labels[i] == predictions[i]);
-                clog << fixed;
-                clog << setprecision (1);
-                clog << 100.0 * correct / predictions.size () << "% correct" << endl;
-                clog << "Writing dataframe" << endl;
-            }
 
             // Assign predictions
             assert (samples.size () == predictions.size ());
@@ -165,20 +181,8 @@ int qtrees (int argc, char **argv)
             ((void) (i)); // Eliminate unused variable warning
         }
 
-        processing_timer.stop ();
-
         // Save results
-        write_samples (cout, photons, samples);
-
-        total_timer.stop ();
-
-        if (args.verbose)
-        {
-            clog << "Total elapsed time " << total_timer.elapsed_ms () / 1000.0 << " seconds" << endl;
-            clog << "Elapsed processing time " << processing_timer.elapsed_ms () / 1000.0 << " seconds" << endl;
-            clog << photons.rows () / (total_timer.elapsed_ms () / 1000.0) << " photons/second total" << endl;
-            clog << photons.rows () / (processing_timer.elapsed_ms () / 1000.0) << " photons/second without I/O" << endl;
-        }
+//        write_samples (cout, photons, samples);
 
         return 0;
     }
@@ -187,4 +191,26 @@ int qtrees (int argc, char **argv)
         cerr << e.what () << endl;
         return -1;
     }
+}
+
+/******************************************************************************
+ * EXPORTED FUNCTIONS
+ ******************************************************************************/
+
+extern "C" {
+void initqtrees (void)
+{
+    /* Extend Lua */
+    LuaEngine::extend(LUA_QTREES_LIBNAME, qtrees_open);
+
+    /* Indicate Presence of Package */
+    LuaEngine::indicate(LUA_QTREES_LIBNAME, BINID);
+
+    /* Display Status */
+    print2term("%s plugin initialized (%s)\n", LUA_QTREES_LIBNAME, BINID);
+}
+
+void deinitqtrees (void)
+{
+}
 }

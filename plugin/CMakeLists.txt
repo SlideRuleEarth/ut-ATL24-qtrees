@@ -22,9 +22,11 @@ target_link_libraries(qtrees xgboost::xgboost)
 target_include_directories (qtrees PUBLIC ..)
 target_include_directories (qtrees PUBLIC ../apps)
 target_include_directories (qtrees PUBLIC ${INSTALLDIR}/include/sliderule)
+target_compile_definitions (qtrees PUBLIC BINID="v0.0.1")
 target_precompile_headers(qtrees PUBLIC ../apps/precompiled.h)
 set_target_properties (qtrees PROPERTIES OUTPUT_NAME qtrees)
 set_target_properties (qtrees PROPERTIES PREFIX "")
+
 
 # Build Information #
 execute_process (COMMAND git --work-tree ${PROJECT_SOURCE_DIR}/.. --git-dir ${PROJECT_SOURCE_DIR}/../.git describe --abbrev --dirty --always --tags --long OUTPUT_VARIABLE BUILDINFO)
