@@ -2,6 +2,18 @@
 
 #include "ATL24_qtrees/dataframe.h"
 
+#ifndef PI_NAME
+#define PI_NAME "ph_index"
+#endif
+
+#ifndef X_NAME
+#define X_NAME "along_track_dist"
+#endif
+
+#ifndef Z_NAME
+#define Z_NAME "geoid_corrected_h"
+#endif
+
 namespace ATL24_qtrees
 {
 
@@ -269,9 +281,9 @@ std::vector<sample> convert_dataframe (const T &df)
     const size_t nrows = df.columns[0].size ();
 
     // Get the columns we are interested in
-    auto pi_it = find (df.headers.begin(), df.headers.end(), "ph_index");
-    auto x_it = find (df.headers.begin(), df.headers.end(), "along_track_dist");
-    auto z_it = find (df.headers.begin(), df.headers.end(), "geoid_corrected_h");
+    auto pi_it = find (df.headers.begin(), df.headers.end(), PI_NAME);
+    auto x_it = find (df.headers.begin(), df.headers.end(), X_NAME);
+    auto z_it = find (df.headers.begin(), df.headers.end(), Z_NAME);
     auto cls_it = find (df.headers.begin(), df.headers.end(), "manual_label");
     auto prediction_it = find (df.headers.begin(), df.headers.end(), "prediction");
     auto surface_elevation_it = find (df.headers.begin(), df.headers.end(), "sea_surface_h");
