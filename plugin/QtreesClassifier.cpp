@@ -254,8 +254,8 @@ bool QtreesClassifier::run (const vector<extent_t*>& extents)
             for(size_t j = 0; j < extents[i]->photon_count; j++)
             {
                 if(parms.set_surface) photons[j].surface_h = samples[s].surface_elevation;
-                if(parms.set_class) photons[j].class_ph = samples[s].cls;
-                photons[j].processing_result = samples[s].cls;
+                if(parms.set_class) photons[j].class_ph = samples[s].prediction;
+                photons[j].processing_result = samples[s].prediction;
                 s++; // go to next sample
             }
         }
