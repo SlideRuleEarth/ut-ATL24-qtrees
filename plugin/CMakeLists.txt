@@ -17,7 +17,8 @@ set(CMAKE_CXX_FLAGS "-Wall -Werror ${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
 set(INSTALLDIR /usr/local CACHE STRING "Installation directory for library and executables")
 
 # Plugin #
-add_library(qtrees SHARED ../plugin/qtrees.cpp)
+add_library(qtrees SHARED ${CMAKE_CURRENT_LIST_DIR}/qtrees.cpp)
+target_sources(qtrees PRIVATE ${CMAKE_CURRENT_LIST_DIR}/QtreesClassifier.cpp)
 target_link_libraries(qtrees xgboost::xgboost)
 target_include_directories (qtrees PUBLIC ..)
 target_include_directories (qtrees PUBLIC ../apps)
