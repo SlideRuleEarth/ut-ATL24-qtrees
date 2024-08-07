@@ -7,10 +7,7 @@
 #include "ATL24_qtrees/xgboost.h"
 
 #include "QtreesClassifier.h"
-#include "icesat2/BathyFields.h"
-
-using BathyFields::extent_t;
-using BathyFields::photon_t;
+#include "bathy/BathyParms.h"
 
 /******************************************************************************
  * EXTERNAL FUNCTION (to be moved)
@@ -212,7 +209,7 @@ QtreesClassifier::~QtreesClassifier (void)
 /*----------------------------------------------------------------------------
  * run
  *----------------------------------------------------------------------------*/
-bool QtreesClassifier::run (const vector<extent_t*>& extents)
+bool QtreesClassifier::run (const vector<BathyParms::extent_t*>& extents)
 {
     try
     {
@@ -231,7 +228,7 @@ bool QtreesClassifier::run (const vector<extent_t*>& extents)
         // Build and add samples
         for(size_t i = 0; i < extents.size(); i++)
         {
-            photon_t* photons = extents[i]->photons;
+            BathyParms::photon_t* photons = extents[i]->photons;
             for(size_t j = 0; j < extents[i]->photon_count; j++)
             {
                 utils::sample s = {
@@ -250,12 +247,12 @@ bool QtreesClassifier::run (const vector<extent_t*>& extents)
         size_t s = 0; // sample index
         for(size_t i = 0; i < extents.size(); i++)
         {
-            photon_t* photons = extents[i]->photons;
+            BathyParms::photon_t* photons = extents[i]->photons;
             for(size_t j = 0; j < extents[i]->photon_count; j++)
             {
                 if(parms.set_surface) photons[j].surface_h = samples[s].surface_elevation;
                 if(parms.set_class) photons[j].class_ph = samples[s].prediction;
-                photons[j].processing_result = samples[s].prediction;
+                photons[j].predictions[classifier] = samples[s].prediction;
                 s++; // go to next sample
             }
         }
