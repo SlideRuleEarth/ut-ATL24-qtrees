@@ -228,6 +228,7 @@ bool QtreesClassifier::run (const vector<BathyParms::extent_t*>& extents)
         // Build and add samples
         for(size_t i = 0; i < extents.size(); i++)
         {
+            // Populate sample
             BathyParms::photon_t* photons = extents[i]->photons;
             for(size_t j = 0; j < extents[i]->photon_count; j++)
             {
@@ -237,6 +238,12 @@ bool QtreesClassifier::run (const vector<BathyParms::extent_t*>& extents)
                     .z = photons[j].ortho_h
                 };
                 samples.push_back(s);
+
+                // Clear classification (if necessary)
+                if(parms.set_class)
+                {
+                    photons[j].class_ph = BathyParms::UNCLASSIFIED;
+                }
             }
         }
 

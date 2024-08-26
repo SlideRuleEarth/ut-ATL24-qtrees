@@ -37,7 +37,7 @@ class QtreesClassifier: public BathyClassifier
             bool verbose;       // verbose settin gin XGBoost library
             parms_t(): 
                 model (DEFAULT_QTREES_MODEL),
-                set_class (true),
+                set_class (false),
                 set_surface (true),
                 verbose (true) {};
             ~parms_t() {};
