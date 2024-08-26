@@ -25,11 +25,11 @@ target_include_directories (qtrees PUBLIC ../apps)
 target_include_directories (qtrees PUBLIC ${INSTALLDIR}/include/sliderule)
 target_include_directories (qtrees PUBLIC ${INSTALLDIR}/include/sliderule/bathy)
 target_include_directories (qtrees PUBLIC ${INSTALLDIR}/include/sliderule/icesat2)
-target_compile_definitions (qtrees PUBLIC BINID="v0.0.1")
+file(STRINGS ${INSTALLDIR}/etc/sliderule/version.txt LIBVER)
+target_compile_definitions (qtrees PUBLIC BINID="${LIBVER}")
 target_precompile_headers(qtrees PUBLIC ../apps/precompiled.h)
 set_target_properties (qtrees PROPERTIES OUTPUT_NAME qtrees)
 set_target_properties (qtrees PROPERTIES PREFIX "")
-
 
 # Build Information #
 execute_process (COMMAND git --work-tree ${PROJECT_SOURCE_DIR}/.. --git-dir ${PROJECT_SOURCE_DIR}/../.git describe --abbrev --dirty --always --tags --long OUTPUT_VARIABLE BUILDINFO)
