@@ -134,7 +134,7 @@ void classify (bool verbose, string model_filename, vector<utils::sample>& sampl
 
 const char* QtreesClassifier::CLASSIFIER_NAME = "qtrees";
 const char* QtreesClassifier::QTREES_PARMS = "qtrees";
-const char* QtreesClassifier::DEFAULT_QTREES_MODEL = "/data/model-20240607.json";
+const char* QtreesClassifier::DEFAULT_QTREES_MODEL = "/data/qtrees_model-20240607.json";
 
 static const char* QTREES_PARM_MODEL = "model";
 static const char* QTREES_PARM_SET_CLASS = "set_class";
