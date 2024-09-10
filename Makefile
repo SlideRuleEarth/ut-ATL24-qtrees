@@ -47,7 +47,7 @@ test:
 #
 ##############################################################################
 
-INPUT=./data/local/combined/*.csv
+INPUT=./data/remote/latest/*.csv
 MODEL=./models/model.json
 BUILD=release
 EPOCHS=100
@@ -115,14 +115,6 @@ cross_val:
 	@cat ./results/cross_validate.bash
 	@bash ./results/cross_validate.bash
 	@rm ./results/cross_validate.bash
-
-PREDICTION_FNS=$(shell find ./results/*_classified.csv | shuf | tail)
-
-.PHONY: view # View predictions
-view:
-	@parallel --lb --jobs=100 \
-		"streamlit run ./scripts/view_predictions.py -- --verbose {}" \
-		::: ${PREDICTION_FNS}
 
 ##############################################################################
 #
