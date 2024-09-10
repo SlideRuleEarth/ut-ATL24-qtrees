@@ -2,17 +2,9 @@
 
 #include "ATL24_qtrees/dataframe.h"
 
-#ifndef PI_NAME
-#define PI_NAME "ph_index"
-#endif
-
-#ifndef X_NAME
-#define X_NAME "along_track_dist"
-#endif
-
-#ifndef Z_NAME
-#define Z_NAME "geoid_corrected_h"
-#endif
+const std::string pi_name ("index_ph");
+const std::string x_name ("x_atc");
+const std::string z_name ("ortho_h");
 
 namespace ATL24_qtrees
 {
@@ -281,9 +273,9 @@ std::vector<sample> convert_dataframe (const T &df)
     const size_t nrows = df.columns[0].size ();
 
     // Get the columns we are interested in
-    auto pi_it = find (df.headers.begin(), df.headers.end(), PI_NAME);
-    auto x_it = find (df.headers.begin(), df.headers.end(), X_NAME);
-    auto z_it = find (df.headers.begin(), df.headers.end(), Z_NAME);
+    auto pi_it = find (df.headers.begin(), df.headers.end(), pi_name);
+    auto x_it = find (df.headers.begin(), df.headers.end(), x_name);
+    auto z_it = find (df.headers.begin(), df.headers.end(), z_name);
     auto cls_it = find (df.headers.begin(), df.headers.end(), "manual_label");
     auto prediction_it = find (df.headers.begin(), df.headers.end(), "prediction");
     auto surface_elevation_it = find (df.headers.begin(), df.headers.end(), "sea_surface_h");
@@ -294,13 +286,13 @@ std::vector<sample> convert_dataframe (const T &df)
     assert (z_it != df.headers.end ());
 
     if (pi_it == df.headers.end ())
-        throw runtime_error ("Can't find 'ph_index' in dataframe");
+        throw runtime_error ("Can't find 'index_ph' in dataframe");
     if (x_it == df.headers.end ())
         throw runtime_error ("Can't find 'along_track_dist' in dataframe");
     if (z_it == df.headers.end ())
         throw runtime_error ("Can't find 'geoid_corrected_h' in dataframe");
 
-    size_t ph_index = pi_it - df.headers.begin();
+    size_t index_ph = pi_it - df.headers.begin();
     size_t x_index = x_it - df.headers.begin();
     size_t z_index = z_it - df.headers.begin();
     const bool has_manual_label = cls_it != df.headers.end ();
@@ -321,7 +313,7 @@ std::vector<sample> convert_dataframe (const T &df)
         df.headers.size ();
 
     // Check logic
-    assert (ph_index < df.headers.size ());
+    assert (index_ph < df.headers.size ());
     assert (x_index < df.headers.size ());
     assert (z_index < df.headers.size ());
     if (has_manual_label)
@@ -333,7 +325,7 @@ std::vector<sample> convert_dataframe (const T &df)
     if (has_bathy_elevations)
         assert (bathy_elevation_index < df.headers.size ());
 
-    assert (ph_index < df.columns.size ());
+    assert (index_ph < df.columns.size ());
     assert (x_index < df.columns.size ());
     assert (z_index < df.columns.size ());
     if (has_manual_label)
@@ -351,7 +343,7 @@ std::vector<sample> convert_dataframe (const T &df)
     for (size_t j = 0; j < nrows; ++j)
     {
         // Check logic
-        assert (j < df.columns[ph_index].size ());
+        assert (j < df.columns[index_ph].size ());
         assert (j < df.columns[x_index].size ());
         assert (j < df.columns[z_index].size ());
         if (has_manual_label)
@@ -364,7 +356,7 @@ std::vector<sample> convert_dataframe (const T &df)
             assert (j < df.columns[bathy_elevation_index].size ());
 
         // Make assignments
-        dataset[j].h5_index = df.columns[ph_index][j];
+        dataset[j].h5_index = df.columns[index_ph][j];
         dataset[j].x = df.columns[x_index][j];
         dataset[j].z = df.columns[z_index][j];
         if (has_manual_label)
