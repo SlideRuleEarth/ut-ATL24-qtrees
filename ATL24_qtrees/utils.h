@@ -288,9 +288,9 @@ std::vector<sample> convert_dataframe (const T &df)
     if (pi_it == df.headers.end ())
         throw runtime_error ("Can't find 'index_ph' in dataframe");
     if (x_it == df.headers.end ())
-        throw runtime_error ("Can't find 'along_track_dist' in dataframe");
+        throw runtime_error ("Can't find 'x_atc' in dataframe");
     if (z_it == df.headers.end ())
-        throw runtime_error ("Can't find 'geoid_corrected_h' in dataframe");
+        throw runtime_error ("Can't find 'ortho_h' in dataframe");
 
     size_t index_ph = pi_it - df.headers.begin();
     size_t x_index = x_it - df.headers.begin();
