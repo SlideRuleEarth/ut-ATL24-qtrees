@@ -87,13 +87,13 @@ tune_hyperparams:
 
 .PHONY: classify # Run classifier
 classify: build
-	@mkdir -p ./results
+	@mkdir -p ./predictions
 	@parallel --verbose --lb --jobs=15 --halt now,fail=1 \
 		"./build/$(BUILD)/classify \
 			--verbose \
 			--model-filename=$(MODEL) \
 			< {} \
-			> results/{/.}_classified.csv" \
+			> predictions/{/.}_classified.csv" \
 	::: $(INPUT)
 
 .PHONY: score # Score results
@@ -101,8 +101,8 @@ score:
 	@parallel --verbose --lb --jobs=15 --halt now,fail=1 \
 		"./build/$(BUILD)/score \
 			--verbose \
-			< results/{/.}_classified.csv \
-			> results/{/.}_score.txt" \
+			< predictions/{/.}_classified.csv \
+			> predictions/{/.}_score.txt" \
 	::: $(INPUT)
 	@./scripts/summarize_scores.bash
 
@@ -111,10 +111,10 @@ cross_val:
 	@./scripts/generate_cross_val_commands.py \
 		--verbose \
 		--splits=5 \
-		"$(INPUT)" > ./results/cross_validate.bash
-	@cat ./results/cross_validate.bash
-	@bash ./results/cross_validate.bash
-	@rm ./results/cross_validate.bash
+		"$(INPUT)" > ./predictions/cross_validate.bash
+	@cat ./predictions/cross_validate.bash
+	@bash ./predictions/cross_validate.bash
+	@rm ./predictions/cross_validate.bash
 
 ##############################################################################
 #
