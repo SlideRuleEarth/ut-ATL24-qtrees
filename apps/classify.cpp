@@ -47,8 +47,11 @@ int main (int argc, char **argv)
 
         processing_timer.start ();
 
+        // Convert it to the correct format
+        auto samples = convert_dataframe (photons);
+
         // Get the predictions
-        const auto samples = classify (args, photons);
+        classify (args, samples);
 
         processing_timer.stop ();
 

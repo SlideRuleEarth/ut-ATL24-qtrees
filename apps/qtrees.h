@@ -1,12 +1,14 @@
 #pragma once
 
 #include "precompiled.h"
+#include "classify_cmd.h"
+#include "../ATL24_qtrees/utils.h"
+#include "../ATL24_qtrees/xgboost.h"
 
 namespace ATL24_qtrees
 {
 
-template<typename T,typename U>
-std::vector<ATL24_qtrees::utils::sample> classify (const T &args, const U &photons)
+void classify (const ATL24_qtrees::cmd::args &args, std::vector<ATL24_qtrees::utils::sample>& samples)
 {
     using namespace std;
     using namespace ATL24_qtrees::utils;
@@ -19,9 +21,6 @@ std::vector<ATL24_qtrees::utils::sample> classify (const T &args, const U &photo
     // Create the booster
     xgbooster xgb (args.verbose);
     xgb.load_model (args.model_filename);
-
-    // Convert it to the correct format
-    auto samples = convert_dataframe (photons);
 
     if (args.verbose)
     {
@@ -129,8 +128,6 @@ std::vector<ATL24_qtrees::utils::sample> classify (const T &args, const U &photo
         assert (h5_indexes[i] == samples[i].h5_index);
         ((void) (i)); // Eliminate unused variable warning
     }
-
-    return samples;
 }
 
 } // namespace ATL24_qtrees
