@@ -416,12 +416,12 @@ std::vector<sample> read_training_samples (const bool verbose, const T &fns)
     {
         clog << samples.size () << " samples read" << endl;
         unordered_map<size_t,size_t> label_map;
-        for (auto i : samples)
+        for (const auto& i : samples)
             ++label_map[i.cls];
         clog << "label\ttotal\t%" << endl;
         clog << fixed;
         clog << setprecision (1);
-        for (auto i : label_map)
+        for (const auto& i : label_map)
         {
             clog << i.first;
             clog << "\t" << i.second;

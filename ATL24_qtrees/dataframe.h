@@ -171,7 +171,7 @@ std::ostream &write (std::ostream &os, const dataframe &df, const size_t precisi
 
     // Print headers
     bool first = true;
-    for (auto h : df.headers)
+    for (const auto& h : df.headers)
     {
         if (!first)
             os << ",";
