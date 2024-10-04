@@ -51,7 +51,7 @@ int main (int argc, char **argv)
         auto samples = convert_dataframe (photons);
 
         // Get the predictions
-        samples = classify (args, samples);
+        samples = classify (args.verbose, samples, args.model_filename);
 
         processing_timer.stop ();
 

@@ -8,22 +8,22 @@
 namespace ATL24_qtrees
 {
 
-template<typename T,typename U>
-U classify (const T &args, U samples)
+template<typename T>
+T classify (const bool verbose, T samples, const std::string &model_filename)
 {
     using namespace std;
     using namespace ATL24_qtrees::utils;
     using namespace ATL24_qtrees::utils::constants;
     using namespace ATL24_qtrees::xgboost;
 
-    if (args.model_filename.empty ())
+    if (model_filename.empty ())
         throw runtime_error ("No model filename was specified");
 
     // Create the booster
-    xgbooster xgb (args.verbose);
-    xgb.load_model (args.model_filename);
+    xgbooster xgb (verbose);
+    xgb.load_model (model_filename);
 
-    if (args.verbose)
+    if (verbose)
     {
         clog << samples.size () << " samples read" << endl;
         clog << "Creating features" << endl;
@@ -45,7 +45,7 @@ U classify (const T &args, U samples)
     vector<float> features; features.reserve (rows * cols);
     vector<uint32_t> labels; labels.reserve (rows);
 
-    if (args.verbose)
+    if (verbose)
         clog << "Features per sample " << f.features_per_sample () << endl;
 
     for (size_t i = 0; i < samples.size (); ++i)
@@ -66,12 +66,12 @@ U classify (const T &args, U samples)
 
     // Get predictions
     {
-        if (args.verbose)
+        if (verbose)
             clog << "Getting predictions" << endl;
 
         const auto predictions = xgb.predict (features, rows, cols);
 
-        if (args.verbose)
+        if (verbose)
         {
             size_t correct = 0;
 
