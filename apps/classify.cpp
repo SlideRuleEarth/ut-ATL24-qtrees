@@ -1,7 +1,7 @@
 #include "precompiled.h"
 #include "classify_cmd.h"
 #include "ATL24_qtrees/xgboost.h"
-#include "qtrees.h"
+#include "ATL24_qtrees/qtrees.h"
 
 const std::string usage {"classify [options] < input_filename.csv > output_filename.csv"};
 
@@ -51,7 +51,7 @@ int main (int argc, char **argv)
         auto samples = convert_dataframe (photons);
 
         // Get the predictions
-        classify (args, samples);
+        samples = classify (args, samples);
 
         processing_timer.stop ();
 
