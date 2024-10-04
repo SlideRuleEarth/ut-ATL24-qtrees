@@ -1,7 +1,7 @@
 #pragma once
 
 #include "precompiled.h"
-#include "../ATL24_qtrees/cmd_utils.h"
+#include "ATL24_qtrees/cmd_utils.h"
 
 namespace ATL24_qtrees
 {
