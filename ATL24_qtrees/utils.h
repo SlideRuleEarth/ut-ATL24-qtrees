@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dataframe.h"
+#include "ATL24_qtrees/dataframe.h"
 
 const std::string pi_name ("index_ph");
 const std::string x_name ("x_atc");
@@ -190,14 +190,15 @@ std::vector<window> get_windows (const T &samples,
     return w;
 }
 
+template<typename T>
 class features
 {
     public:
-    features (const auto &_samples, const feature_params &_fp)
-        : samples (_samples)
-        , fp (_fp)
-        , window_indexes (get_window_indexes (samples, fp))
-        , windows (get_windows (samples, fp, window_indexes))
+    features (const T &init_samples, const feature_params &init_fp)
+        : samples (init_samples)
+        , fp (init_fp)
+        , window_indexes (get_window_indexes (init_samples, init_fp))
+        , windows (get_windows (init_samples, init_fp, window_indexes))
     {
         assert (window_indexes.size () == samples.size ());
     }
