@@ -119,14 +119,14 @@ int main() {
     DMatrixHandle dmat;
     safe_xgboost(XGDMatrixCreateFromMat(values, 1, 127, 0.0, &dmat));
 
-    const float* out_result = NULL;
+    const float* tmp_out_result = NULL;
 
     safe_xgboost(
-        XGBoosterPredictFromDMatrix(booster, dmat, config, &out_shape, &out_dim, &out_result));
+        XGBoosterPredictFromDMatrix(booster, dmat, config, &out_shape, &out_dim, &tmp_out_result));
     assert(out_dim == 1);
     assert(out_shape[0] == 1);
 
-    printf("%1.4f \n", out_result[0]);
+    printf("%1.4f \n", tmp_out_result[0]);
     safe_xgboost(XGDMatrixFree(dmat));
   }
 
@@ -153,14 +153,14 @@ int main() {
 
     safe_xgboost(XGDMatrixCreateFromCSR(j_indptr, j_indices, j_data, 127, j_config, &dmat));
 
-    const float* out_result = NULL;
+    const float* tmp_out_result = NULL;
 
     safe_xgboost(
-        XGBoosterPredictFromDMatrix(booster, dmat, config, &out_shape, &out_dim, &out_result));
+        XGBoosterPredictFromDMatrix(booster, dmat, config, &out_shape, &out_dim, &tmp_out_result));
     assert(out_dim == 1);
     assert(out_shape[0] == 1);
 
-    printf("%1.4f \n", out_result[0]);
+    printf("%1.4f \n", tmp_out_result[0]);
     safe_xgboost(XGDMatrixFree(dmat));
   }
 
@@ -194,14 +194,14 @@ int main() {
     DMatrixHandle dmat;
     safe_xgboost(XGDMatrixCreateFromCSC(j_indptr, j_indices, j_data, 1, j_config, &dmat));
 
-    const float* out_result = NULL;
+    const float* tmp_out_result = NULL;
 
     safe_xgboost(
-        XGBoosterPredictFromDMatrix(booster, dmat, config, &out_shape, &out_dim, &out_result));
+        XGBoosterPredictFromDMatrix(booster, dmat, config, &out_shape, &out_dim, &tmp_out_result));
     assert(out_dim == 1);
     assert(out_shape[0] == 1);
 
-    printf("%1.4f \n", out_result[0]);
+    printf("%1.4f \n", tmp_out_result[0]);
     safe_xgboost(XGDMatrixFree(dmat));
   }
 

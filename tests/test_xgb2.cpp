@@ -140,7 +140,7 @@ int main() {
     safe_xgboost(XGBoosterLoadModel(booster, model_name));
     {
         /* Run prediction with DMatrix object. */
-        char const config[] =
+        char const tmp_config[] =
             "{\"training\": false, \"type\": 0, "
             "\"iteration_begin\": 0, \"iteration_end\": 0, \"strict_shape\": true}";
         /* Shape of output prediction */
@@ -150,7 +150,7 @@ int main() {
         /* Pointer to a thread local contigious array, assigned in prediction function. */
         float const *out_results;
 
-        safe_xgboost(XGBoosterPredictFromDMatrix(booster, Xy, config, &out_shape,
+        safe_xgboost(XGBoosterPredictFromDMatrix(booster, Xy, tmp_config, &out_shape,
                     &out_dim, &out_results));
         if (out_dim != 2 || out_shape[0] != N_SAMPLES || out_shape[1] != 1) {
             fprintf(stderr, "Regression model should output prediction as vector.");
@@ -168,7 +168,7 @@ int main() {
     {
         /* Run inplace prediction, which is faster and more memory efficient, but supports
          * only basic inference types. */
-        char const config[] = "{\"type\": 0, \"iteration_begin\": 0, "
+        char const tmp_config[] = "{\"type\": 0, \"iteration_begin\": 0, "
             "\"iteration_end\": 0, \"strict_shape\": true, "
             "\"cache_id\": 0, \"missing\": NaN}";
         /* Shape of output prediction */
@@ -178,8 +178,8 @@ int main() {
         /* Pointer to a thread local contigious array, assigned in prediction function. */
         float const *out_results;
 
-        char const *X_interface = Matrix_ArrayInterface(X);
-        safe_xgboost(XGBoosterPredictFromDense(booster, X_interface, config, NULL,
+        char const *tmp_X_interface = Matrix_ArrayInterface(X);
+        safe_xgboost(XGBoosterPredictFromDense(booster, tmp_X_interface, tmp_config, NULL,
                     &out_shape, &out_dim, &out_results));
 
         if (out_dim != 2 || out_shape[0] != N_SAMPLES || out_shape[1] != 1) {
