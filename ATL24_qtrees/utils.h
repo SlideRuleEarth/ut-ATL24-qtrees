@@ -4,7 +4,7 @@
 
 const std::string pi_name ("index_ph");
 const std::string x_name ("x_atc");
-const std::string z_name ("ortho_h");
+const std::string z_name ("geoid_corr_h");
 
 namespace ATL24_qtrees
 {
@@ -291,7 +291,7 @@ std::vector<sample> convert_dataframe (const T &df)
     if (x_it == df.headers.end ())
         throw runtime_error ("Can't find 'x_atc' in dataframe");
     if (z_it == df.headers.end ())
-        throw runtime_error ("Can't find 'ortho_h' in dataframe");
+        throw runtime_error ("Can't find 'geoid_corr_h' in dataframe");
 
     size_t index_ph = pi_it - df.headers.begin();
     size_t x_index = x_it - df.headers.begin();
