@@ -104,7 +104,7 @@ score:
 			< predictions/{/.}_classified.csv \
 			> predictions/{/.}_score.txt" \
 	::: $(INPUT)
-	@./scripts/summarize_scores.bash
+	@./scripts/summarize_scores.bash | tee scores.txt
 
 .PHONY: cross_val # Cross validate
 cross_val:
