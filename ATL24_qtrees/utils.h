@@ -867,7 +867,7 @@ void check_surface_estimates (T &samples, size_t &changed)
         if (samples[i].z < min_surface_elevation || samples[i].z > max_surface_elevation)
         {
             // Re-assign
-            samples[i].prediction = 1;
+            samples[i].prediction = 0;
 
 #pragma omp atomic
             ++tmp;
@@ -880,7 +880,7 @@ void check_surface_estimates (T &samples, size_t &changed)
         if (delta > max_surface_estimate_delta)
         {
             // Re-assign
-            samples[i].prediction = 1;
+            samples[i].prediction = 0;
 
 #pragma omp atomic
             ++tmp;
@@ -912,7 +912,7 @@ void check_bathy_estimates (T &samples, size_t &changed)
         if (samples[i].z < min_photon_elevation || samples[i].z > max_photon_elevation)
         {
             // Re-assign
-            samples[i].prediction = 1;
+            samples[i].prediction = 0;
 
 #pragma omp atomic
             ++tmp;
@@ -924,7 +924,7 @@ void check_bathy_estimates (T &samples, size_t &changed)
         if (samples[i].z + min_bathy_depth >= samples[i].surface_elevation)
         {
             // Re-assign
-            samples[i].prediction = 1;
+            samples[i].prediction = 0;
 
 #pragma omp atomic
             ++tmp;
@@ -938,7 +938,7 @@ void check_bathy_estimates (T &samples, size_t &changed)
         if (delta > max_bathy_estimate_delta)
         {
             // Re-assign
-            samples[i].prediction = 1;
+            samples[i].prediction = 0;
 
 #pragma omp atomic
             ++tmp;
