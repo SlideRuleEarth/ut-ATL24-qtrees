@@ -2,11 +2,22 @@
 
 #include "precompiled.h"
 #include "classify_cmd.h"
+#include "ATL24_qtrees/blunder_detection.h"
 #include "ATL24_qtrees/utils.h"
 #include "ATL24_qtrees/xgboost.h"
 
 namespace ATL24_qtrees
 {
+
+struct postprocess_params
+{
+    double surface_min_elevation = -20.0;
+    double surface_max_elevation = 20.0;
+    double bathy_min_elevation = -100.0;
+    double water_column_width = 100;
+    double surface_range = 3.0;
+    double bathy_range = 3.0;
+};
 
 template<typename T>
 T classify (const bool verbose, T samples, const std::string &model_filename)
@@ -120,6 +131,14 @@ T classify (const bool verbose, T samples, const std::string &model_filename)
         // Re-compute and assign estimates in case predictions changed
         assign_bathy_estimates (samples, bathy_sigma);
     }
+
+    // Apply blunder detection
+    if (verbose)
+        clog << "Re-classifying points" << endl;
+
+    postprocess_params params;
+
+    samples = blunder_detection (samples, params);
 
     // Check invariants: The samples should be in the same order in which
     // they were read
