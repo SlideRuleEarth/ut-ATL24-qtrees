@@ -30,6 +30,29 @@ T classify (const bool verbose, T samples, const std::string &model_filename)
     if (model_filename.empty ())
         throw runtime_error ("No model filename was specified");
 
+    // Save the photon indexes
+    vector<size_t> h5_indexes (samples.size ());
+
+#pragma omp parallel for
+    for (size_t i = 0; i < h5_indexes.size (); ++i)
+        h5_indexes[i] = samples[i].h5_index;
+
+    // Get indexes into samples
+    vector<size_t> sorted_indexes (samples.size ());
+
+    // 0, 1, 2, ...
+    iota (sorted_indexes.begin (), sorted_indexes.end (), 0);
+
+    // Sort indexes by X
+    sort (sorted_indexes.begin (), sorted_indexes.end (),
+        [&](const auto &a, const auto &b)
+        { return samples[a].x < samples[b].x; });
+
+    // Sort points by X
+    sort (samples.begin (), samples.end (),
+        [&](const auto &a, const auto &b)
+        { return a.x < b.x; });
+
     // Create the booster
     xgbooster xgb (verbose);
     xgb.load_model (model_filename);
@@ -39,13 +62,6 @@ T classify (const bool verbose, T samples, const std::string &model_filename)
         clog << samples.size () << " samples read" << endl;
         clog << "Creating features" << endl;
     }
-
-    // Save the photon indexes
-    vector<size_t> h5_indexes (samples.size ());
-
-#pragma omp parallel for
-    for (size_t i = 0; i < h5_indexes.size (); ++i)
-        h5_indexes[i] = samples[i].h5_index;
 
     feature_params fp;
     features f (samples, fp);
@@ -139,6 +155,11 @@ T classify (const bool verbose, T samples, const std::string &model_filename)
     postprocess_params params;
 
     samples = blunder_detection (samples, params);
+
+    // Restore original order
+    auto tmp (samples);
+    for (size_t i = 0; i < sorted_indexes.size (); ++i)
+        samples[sorted_indexes[i]] = tmp[i];
 
     // Check invariants: The samples should be in the same order in which
     // they were read
