@@ -49,7 +49,7 @@ test:
 
 INPUT=./data/remote/latest/*.csv
 MODEL=./models/model.json
-BUILD=release
+BUILD=debug
 EPOCHS=100
 
 .PHONY: train # Train a model
