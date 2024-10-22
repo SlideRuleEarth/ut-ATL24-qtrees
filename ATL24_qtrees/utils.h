@@ -24,6 +24,28 @@ struct sample
     double bathy_elevation;
 };
 
+bool operator== (const sample &a, const sample &b)
+{
+    if (a.dataset_id != b.dataset_id)
+        return false;
+    if (a.h5_index != b.h5_index)
+        return false;
+    if (a.x != b.x)
+        return false;
+    if (a.z != b.z)
+        return false;
+    if (a.cls != b.cls)
+        return false;
+    if (a.prediction != b.prediction)
+        return false;
+    if (a.surface_elevation != b.surface_elevation)
+        return false;
+    if (a.bathy_elevation != b.bathy_elevation)
+        return false;
+
+    return true;
+}
+
 namespace constants
 {
     constexpr double max_photon_elevation = 20.0; // meters
