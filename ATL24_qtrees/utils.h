@@ -83,8 +83,8 @@ struct window
     std::vector<double> quantiles;
 };
 
-template<typename T,typename U>
-std::vector<size_t> get_window_indexes (const T &samples, const U &fp)
+template<typename T>
+std::vector<size_t> get_window_indexes (const T &samples, const double &window_size)
 {
     using namespace std;
 
@@ -98,8 +98,7 @@ std::vector<size_t> get_window_indexes (const T &samples, const U &fp)
     for (size_t i = 0; i < samples.size (); ++i)
     {
         // What is the photon's window index?
-        const size_t index = (samples[i].x - min_x) / fp.window_size;
-        assert (index < indexes.size ());
+        const size_t index = (samples[i].x - min_x) / window_size;
         indexes[i] = index;
     }
 
@@ -197,7 +196,7 @@ class features
     features (const T &init_samples, const feature_params &init_fp)
         : samples (init_samples)
         , fp (init_fp)
-        , window_indexes (get_window_indexes (init_samples, init_fp))
+        , window_indexes (get_window_indexes (init_samples, init_fp.window_size))
         , windows (get_windows (init_samples, init_fp, window_indexes))
     {
         assert (window_indexes.size () == samples.size ());
