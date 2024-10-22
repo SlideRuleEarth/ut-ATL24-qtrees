@@ -1,7 +1,7 @@
-average weighted_acc	0.931
-average weighted_F1	0.915
-average weighted_bal_acc	0.908
-average weighted_cal_F1	0.864
-average noise F1	0.813
-average bathy F1	0.518
-average surface F1	0.945
+average weighted_acc	0.924
+average weighted_F1	0.909
+average weighted_bal_acc	0.903
+average weighted_cal_F1	0.859
+average noise F1	0.803
+average bathy F1	0.502
+average surface F1	0.938
