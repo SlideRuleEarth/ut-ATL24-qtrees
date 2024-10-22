@@ -26,6 +26,7 @@ macro(add_test name)
     target_link_libraries(${name} xgboost::xgboost)
 endmacro()
 
+add_test(test_utils)
 add_test(test_xgb1)
 add_test(test_xgb2)
 
