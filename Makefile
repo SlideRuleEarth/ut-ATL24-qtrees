@@ -96,15 +96,11 @@ classify: build
 			> predictions/{/.}_classified.csv" \
 	::: $(INPUT)
 
-.PHONY: score # Score results
-score:
-	@parallel --verbose --lb --jobs=15 --halt now,fail=1 \
-		"./build/$(BUILD)/score \
-			--verbose \
-			< predictions/{/.}_classified.csv \
-			> predictions/{/.}_score.txt" \
-	::: $(INPUT)
-	@./scripts/summarize_scores.bash | tee scores.txt
+.PHONY: score # Get scores
+score: build
+	@./scripts/get_scores.sh
+	@cat ./micro_scores_no_surface.txt
+	@cat ./micro_scores_all.txt
 
 .PHONY: cross_val # Cross validate
 cross_val:
