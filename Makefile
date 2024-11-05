@@ -10,10 +10,10 @@ default: build test
 
 # Recreate Makefiles when CMakeLists.txt changes
 ./build/debug/Makefile: CMakeLists.txt
-	mkdir -p ./build/debug
-	mkdir -p ./build/release
-	cd build/debug && cmake -D CMAKE_BUILD_TYPE=Debug ../..
-	cd build/release && cmake -D CMAKE_BUILD_TYPE=Release ../..
+	@mkdir -p ./build/debug
+	@mkdir -p ./build/release
+	@cd build/debug && cmake -D CMAKE_BUILD_TYPE=Debug ../..
+	@cd build/release && cmake -D CMAKE_BUILD_TYPE=Release ../..
 
 .PHONY: build # Build all targets
 build: ./build/debug/Makefile
@@ -97,7 +97,7 @@ classify: build
 	::: $(INPUT)
 
 .PHONY: score # Get scores
-score: build
+score:
 	@./scripts/get_scores.sh
 	@cat ./micro_scores_no_surface.txt
 	@cat ./micro_scores_all.txt
