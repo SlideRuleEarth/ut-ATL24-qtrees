@@ -1,7 +1,11 @@
-average weighted_acc	0.933
-average weighted_F1	0.917
-average weighted_bal_acc	0.909
-average weighted_cal_F1	0.866
-average noise F1	0.817
-average bathy F1	0.488
-average surface F1	0.946
+cls	acc	F1	bal_acc	cal_F1	MCC	Avg	tp	tn	fp	fn	support	total
+40	0.948	0.578	0.721	0.614	0.579	0.623	942706	24145915	229343	1145310	2088016	26463274
+cls	acc	F1	bal_acc	cal_F1	MCC	Avg	tp	tn	fp	fn	support	total
+0	0.917	0.842	0.908	0.874	0.788	0.853	21732717	68303340	5521894	2642541	24375258	98200492
+40	0.986	0.578	0.725	0.620	0.596	0.630	942706	95881996	230480	1145310	2088016	98200492
+41	0.926	0.949	0.918	0.876	0.818	0.890	67127926	23818505	2644769	4609292	71737218	98200492
+weighted_accuracy = 0.925102
+weighted_F1 = 0.91433
+weighted_bal_acc = 0.911432
+weighted_cal_F1 = 0.870196
+weighted_MCC = 0.805599
